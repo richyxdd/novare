@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reviews - Novare Cleaning Services</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="index.html" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit;">
+                    <img src="novare.png" alt="Novare Cleaning Services" class="logo-img">
+                    <span class="logo-text">Novare Cleaning</span>
+                </a>
+            </div>
+            <div class="nav-menu" id="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="index.html#services" class="nav-link">Services</a>
+                <a href="index.html#about" class="nav-link">About</a>
+                <a href="index.html#contact" class="nav-link">Contact</a>
+                <a href="reviews.html" class="nav-link">Reviews</a>
+                <a href="careers.html" class="nav-link">Careers</a>
+                <a href="index.html#quote" class="nav-link quote-btn">Free Quote</a>
+            </div>
+            <div class="hamburger" id="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+     <!-- Reviews Section -->
+     <section class="reviews-page">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">What Our Customers Say</h2>
+                <p class="section-description">
+                    Don't just take our word for it. See what our satisfied customers have to say about their experience with Novare Cleaning Services.
+                </p>
+            </div>
+
+            <!-- Reviews Grid -->
+            <div class="reviews-grid">
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer-info">
+                            <div class="reviewer-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div>
+                                <h4 class="reviewer-name">Sarah M.</h4>
+                                <div class="review-rating">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <span class="review-date">2 weeks ago</span>
+                    </div>
+                    <p class="review-text">
+                        One of the first cleaning services I used and it was great
+                    </p>
+                </div>
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer-info">
+                            <div class="reviewer-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div>
+                                <h4 class="reviewer-name">Fabricio S.</h4>
+                                <div class="review-rating">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+
+                                </div>
+                            </div>
+                        </div>
+                        <span class="review-date">3 months ago</span>
+                    </div>
+                    <p class="review-text">
+                        moving out service was fast and clean
+                    </p>
+                </div>
+        </div>
+
+
+   
+                
+            <!-- Leave Review Section -->
+            <div class="leave-review-section">
+                <div class="leave-review-container">
+                    <h3 class="careers-subtitle">Share Your Experience</h3>
+                    <p style="color: #64748b; margin-bottom: 30px; text-align: center;">
+                        Had a great experience with Novare Cleaning? We'd love to hear from you!
+                    </p>
+                    <form class="review-form" id="review-form">
+                        <div class="form-group">
+                            <label for="reviewer-name">Your Name <span style="color: #ef4444;">*</span></label>
+                            <input type="text" id="reviewer-name" name="reviewer-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="reviewer-email">Email Address <span style="color: #ef4444;">*</span></label>
+                            <input type="email" id="reviewer-email" name="reviewer-email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="review-rating">Rating <span style="color: #ef4444;">*</span></label>
+                            <select id="review-rating" name="review-rating" required>
+                                <option value="">Select Rating</option>
+                                <option value="5">5 Stars - Excellent</option>
+                                <option value="4">4 Stars - Very Good</option>
+                                <option value="3">3 Stars - Good</option>
+                                <option value="2">2 Stars - Fair</option>
+                                <option value="1">1 Star - Poor</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="review-message">Your Review <span style="color: #ef4444;">*</span></label>
+                            <textarea id="review-message" name="review-message" rows="5" placeholder="Tell us about your experience with Novare Cleaning Services..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-large">Submit Review</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <img src="novare-white-bg.jpg" alt="Novare Cleaning Services" class="logo-img">
+                        <span class="logo-text">Novare Cleaning</span>
+                    </div>
+                    <p class="footer-description">
+                        A clean space changes everything. Professional cleaning services 
+                        with a personal touch, founded right here in Massachusetts.
+                    </p>
+                </div>
+                <div class="footer-section">
+                    <h4 class="footer-title">Services</h4>
+                    <ul class="footer-links">
+                        <li><a href="index.html#services">Residential Cleaning</a></li>
+                        <li><a href="index.html#services">Commercial Cleaning</a></li>
+                        <li><a href="index.html#services">Deep Cleaning</a></li>
+                        <li><a href="index.html#services">Move-in/out Cleaning</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4 class="footer-title">Company</h4>
+                    <ul class="footer-links">
+                        <li><a href="index.html#about">About Us</a></li>
+                        <li><a href="index.html#contact">Contact</a></li>
+                        <li><a href="reviews.html">Reviews</a></li>
+                        <li><a href="careers.html">Careers</a></li>
+                        <li><a href="index.html#quote">Free Quote</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4 class="footer-title">Contact Info</h4>
+                    <div class="contact-details">
+                        <p><i class="fas fa-phone"></i> Coming Soon</p>
+                        <p><i class="fas fa-envelope"></i> ddesouza@novarecleaningservice.com</p>
+                        <p><i class="fas fa-map-marker-alt"></i> Massachusetts</p>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Novare Cleaning Services. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
+

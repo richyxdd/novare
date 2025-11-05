@@ -254,6 +254,103 @@ body {
     animation: fadeInRight 0.8s ease 1.2s forwards;
 }
 
+.hero-carousel {
+    width: 100%;
+    max-width: 500px;
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(37, 99, 235, 0.2);
+    aspect-ratio: 1 / 1;
+}
+
+.carousel-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.carousel-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+    transition: opacity 0.8s ease-in-out;
+}
+
+.carousel-image.active {
+    display: block;
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+.carousel-prev,
+.carousel-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10;
+    color: #1da6ec;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.carousel-prev:hover,
+.carousel-next:hover {
+    background: white;
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.carousel-prev {
+    left: 15px;
+}
+
+.carousel-next {
+    right: 15px;
+}
+
+.carousel-indicators {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 10;
+}
+
+.carousel-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid white;
+    background: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0;
+}
+
+.carousel-dot:hover {
+    background: rgba(255, 255, 255, 0.8);
+    transform: scale(1.2);
+}
+
+.carousel-dot.active {
+    background: white;
+    width: 30px;
+    border-radius: 6px;
+}
+
 .image-placeholder {
     width: 400px;
     height: 400px;
@@ -280,9 +377,18 @@ body {
     animation: shimmer 3s infinite;
 }
 
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
 .hero-stats {
     position: absolute;
-    bottom: 30px;
+    bottom: 5px;
     left: 55%;
     transform: translateX(-50%);
     display: flex;
@@ -681,12 +787,17 @@ body {
 }
 
 .checkmark {
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
+    min-width: 22px;
+    min-height: 22px;
     border: 2px solid #e2e8f0;
     border-radius: 4px;
     position: relative;
     transition: all 0.3s ease;
+    display: inline-block;
+    flex-shrink: 0;
+    background: white;
 }
 
 .checkbox-label input[type="checkbox"]:checked + .checkmark {
@@ -701,8 +812,193 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     color: white;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: bold;
+    line-height: 1;
+    display: block;
+}
+
+/* Careers Section */
+.careers {
+    padding: 100px 0;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+}
+
+.careers-page {
+    padding: 120px 0 100px;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    min-height: calc(100vh - 70px);
+}
+
+/* Reviews Section */
+.reviews-page {
+    padding: 120px 0 100px;
+    background: white;
+    min-height: calc(100vh - 70px);
+}
+
+.reviews-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 30px;
+    margin-bottom: 80px;
+}
+
+.review-card {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border: 1px solid #f1f5f9;
+    transition: all 0.3s ease;
+}
+
+.review-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.reviewer-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.reviewer-avatar {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #1da6ec, rgb(41, 94, 180));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+}
+
+.reviewer-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 5px;
+}
+
+.review-rating {
+    color: #fbbf24;
+    font-size: 0.9rem;
+}
+
+.review-date {
+    color: #94a3b8;
+    font-size: 0.9rem;
+}
+
+.review-text {
+    color: #64748b;
+    line-height: 1.7;
+    font-size: 1rem;
+}
+
+.leave-review-section {
+    margin-top: 80px;
+    padding: 60px 0;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border-radius: 20px;
+}
+
+.leave-review-container {
+    max-width: 700px;
+    margin: 0 auto;
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.review-form {
+    margin-top: 20px;
+}
+
+.careers-content {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.careers-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    margin-top: 60px;
+    align-items: start;
+}
+
+.careers-benefits {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.careers-subtitle {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 30px;
+    color: #1e293b;
+}
+
+.benefits-list {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.benefit-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.benefit-item i {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #1da6ec, rgb(41, 94, 180));
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.benefit-item h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #1e293b;
+}
+
+.benefit-item p {
+    color: #64748b;
+    font-size: 0.95rem;
+}
+
+.careers-form-container {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.careers-form {
+    margin-top: 20px;
 }
 
 /* Contact Section */
@@ -983,6 +1279,30 @@ body {
         margin-top: 40px;
         gap: 30px;
     }
+
+    .hero-carousel {
+        max-width: 100%;
+        max-height: 350px;
+    }
+
+    .carousel-prev,
+    .carousel-next {
+        width: 35px;
+        height: 35px;
+        font-size: 1rem;
+    }
+
+    .carousel-prev {
+        left: 10px;
+    }
+
+    .carousel-next {
+        right: 10px;
+    }
+
+    .carousel-indicators {
+        bottom: 15px;
+    }
     .feature-item h4 {
         font-size: 1.1rem;
         font-weight: 600;
@@ -1056,6 +1376,40 @@ body {
         grid-template-columns: 1fr;
         gap: 40px;
         margin-top: 40px;
+    }
+
+    .careers {
+        padding: 60px 0;
+    }
+
+    .careers-info {
+        grid-template-columns: 1fr;
+        gap: 40px;
+        margin-top: 40px;
+    }
+
+    .careers-benefits,
+    .careers-form-container {
+        padding: 30px;
+    }
+
+    .reviews-page {
+        padding: 100px 0 60px;
+    }
+
+    .reviews-grid {
+        grid-template-columns: 1fr;
+        gap: 25px;
+        margin-bottom: 60px;
+    }
+
+    .leave-review-section {
+        margin-top: 60px;
+        padding: 40px 20px;
+    }
+
+    .leave-review-container {
+        padding: 30px 20px;
     }
 
     .contact-info {

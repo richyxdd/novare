@@ -15,16 +15,25 @@ document.querySelectorAll('.nav-link').forEach(link => {
     });
 });
 
-// Smooth scrolling for navigation links
+// Smooth scrolling for navigation links (only for same-page anchors)
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
+        const href = this.getAttribute('href');
+        // Only handle same-page anchors, not links to other pages
+        if (href.startsWith('#') && href.length > 1) {
+            const target = document.querySelector(href);
+            if (target) {
+                e.preventDefault();
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+                // Close mobile menu if open
+                if (navMenu && navMenu.classList.contains('active')) {
+                    hamburger.classList.remove('active');
+                    navMenu.classList.remove('active');
+                }
+            }
         }
     });
 });
@@ -57,18 +66,59 @@ const observer = new IntersectionObserver((entries) => {
 
 // Observe elements for scroll animations
 document.addEventListener('DOMContentLoaded', () => {
-    const animatedElements = document.querySelectorAll('.service-card, .pricing-card, .feature-item, .contact-item');
+    const animatedElements = document.querySelectorAll('.service-card, .pricing-card, .feature-item, .contact-item, .benefit-item');
     animatedElements.forEach(el => {
         el.classList.add('fade-in');
         observer.observe(el);
     });
 });
 
+// EmailJS Configuration
+// Replace these with your EmailJS credentials from https://www.emailjs.com/
+const EMAILJS_CONFIG = {
+    PUBLIC_KEY: 'YOUR_PUBLIC_KEY', // Your EmailJS Public Key (User ID)
+    SERVICE_ID: 'YOUR_SERVICE_ID', // Your EmailJS Service ID
+    QUOTE_TEMPLATE_ID: 'YOUR_QUOTE_TEMPLATE_ID', // Template ID for quote form
+    CAREERS_TEMPLATE_ID: 'YOUR_CAREERS_TEMPLATE_ID', // Template ID for careers form
+    REVIEW_TEMPLATE_ID: 'YOUR_REVIEW_TEMPLATE_ID' // Template ID for review form (optional - can use quote template)
+};
+
+// Initialize EmailJS
+if (typeof emailjs !== 'undefined' && EMAILJS_CONFIG.PUBLIC_KEY !== 'YOUR_PUBLIC_KEY') {
+    emailjs.init(EMAILJS_CONFIG.PUBLIC_KEY);
+}
+
+// Helper function to send email via EmailJS
+async function sendEmail(templateId, templateParams) {
+    try {
+        if (EMAILJS_CONFIG.PUBLIC_KEY === 'YOUR_PUBLIC_KEY') {
+            // Fallback: Show notification and log to console if EmailJS not configured
+            console.log('EmailJS not configured. Form data:', templateParams);
+            return { success: true, message: 'EmailJS not configured. Please set up your credentials.' };
+        }
+        
+        const response = await emailjs.send(
+            EMAILJS_CONFIG.SERVICE_ID,
+            templateId,
+            templateParams
+        );
+        return { success: true, message: 'Email sent successfully!' };
+    } catch (error) {
+        console.error('EmailJS Error:', error);
+        return { success: false, message: 'Failed to send email. Please try again or contact us directly.' };
+    }
+}
+
 // Quote form handling
 const quoteForm = document.getElementById('quote-form');
 if (quoteForm) {
-    quoteForm.addEventListener('submit', function(e) {
+    quoteForm.addEventListener('submit', async function(e) {
         e.preventDefault();
+        
+        const submitButton = this.querySelector('button[type="submit"]');
+        const originalText = submitButton.textContent;
+        submitButton.disabled = true;
+        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
         
         // Get form data
         const formData = new FormData(this);
@@ -85,19 +135,154 @@ if (quoteForm) {
             phone: data.phone,
             propertyType: data['property-type'],
             propertySize: data['property-size'],
-            services: selectedServices,
-            message: data.message,
-            timestamp: new Date().toISOString()
+            services: selectedServices.join(', '),
+            message: data.message || 'No additional notes',
+            timestamp: new Date().toLocaleString()
         };
         
-        // Show success message
-        showNotification('Quote request submitted successfully! We\'ll contact you within 24 hours.', 'success');
+        // Prepare email template parameters
+        const emailParams = {
+            to_email: 'ddesouza@novarecleaningservice.com', // Your company email
+            from_name: quoteData.name,
+            from_email: quoteData.email,
+            phone: quoteData.phone,
+            property_type: quoteData.propertyType,
+            property_size: quoteData.propertySize,
+            services: quoteData.services,
+            message: quoteData.message,
+            reply_to: quoteData.email,
+            subject: `New Quote Request from ${quoteData.name}`
+        };
         
-        // Reset form
-        this.reset();
+        // Send email
+        const result = await sendEmail(EMAILJS_CONFIG.QUOTE_TEMPLATE_ID, emailParams);
         
-        // In a real application, you would send this data to your server
-        console.log('Quote Data:', quoteData);
+        if (result.success) {
+            showNotification('Quote request submitted successfully! We\'ll contact you within 24 hours.', 'success');
+            this.reset();
+        } else {
+            showNotification('There was an error submitting your request. Please try again or contact us directly.', 'error');
+        }
+        
+        submitButton.disabled = false;
+        submitButton.textContent = originalText;
+    });
+}
+
+// Careers form handling
+const careersForm = document.getElementById('careers-form');
+if (careersForm) {
+    careersForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const submitButton = this.querySelector('button[type="submit"]');
+        const originalText = submitButton.textContent;
+        submitButton.disabled = true;
+        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+        
+        // Get form data
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData);
+        
+        // Get selected availability options
+        const availability = Array.from(this.querySelectorAll('input[name="availability"]:checked'))
+            .map(checkbox => checkbox.value);
+        
+        if (availability.length === 0) {
+            showNotification('Please select at least one availability option.', 'error');
+            submitButton.disabled = false;
+            submitButton.textContent = originalText;
+            return;
+        }
+        
+        // Create application summary
+        const applicationData = {
+            name: data['applicant-name'],
+            email: data['applicant-email'],
+            phone: data['applicant-phone'],
+            address: data['applicant-address'],
+            experience: data.experience,
+            availability: availability.join(', '),
+            message: data['applicant-message'] || 'No additional message',
+            timestamp: new Date().toLocaleString()
+        };
+        
+        // Prepare email template parameters
+        const emailParams = {
+            to_email: 'ddesouza@novarecleaningservice.com', // Your company email
+            from_name: applicationData.name,
+            from_email: applicationData.email,
+            phone: applicationData.phone,
+            address: applicationData.address,
+            experience: applicationData.experience,
+            availability: applicationData.availability,
+            message: applicationData.message,
+            reply_to: applicationData.email,
+            subject: `Job Application from ${applicationData.name}`
+        };
+        
+        // Send email
+        const result = await sendEmail(EMAILJS_CONFIG.CAREERS_TEMPLATE_ID, emailParams);
+        
+        if (result.success) {
+            showNotification('Application submitted successfully! We\'ll review your application and get back to you soon.', 'success');
+            this.reset();
+        } else {
+            showNotification('There was an error submitting your application. Please try again or contact us directly.', 'error');
+        }
+        
+        submitButton.disabled = false;
+        submitButton.textContent = originalText;
+    });
+}
+
+// Review form handling
+const reviewForm = document.getElementById('review-form');
+if (reviewForm) {
+    reviewForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const submitButton = this.querySelector('button[type="submit"]');
+        const originalText = submitButton.textContent;
+        submitButton.disabled = true;
+        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+        
+        // Get form data
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData);
+        
+        // Create review summary
+        const reviewData = {
+            name: data['reviewer-name'],
+            email: data['reviewer-email'],
+            rating: data['review-rating'],
+            message: data['review-message'],
+            timestamp: new Date().toLocaleString()
+        };
+        
+        // Prepare email template parameters
+        const emailParams = {
+            to_email: 'ddesouza@novarecleaningservice.com', // Your company email
+            from_name: reviewData.name,
+            from_email: reviewData.email,
+            rating: `${reviewData.rating} Star${reviewData.rating > 1 ? 's' : ''}`,
+            message: reviewData.message,
+            reply_to: reviewData.email,
+            subject: `New Review from ${reviewData.name} - ${reviewData.rating} Stars`
+        };
+        
+        // Send email
+        const result = await sendEmail(EMAILJS_CONFIG.REVIEW_TEMPLATE_ID || EMAILJS_CONFIG.QUOTE_TEMPLATE_ID, emailParams);
+        
+        if (result.success) {
+            showNotification('Thank you for your review! We appreciate your feedback.', 'success');
+            this.reset();
+        } else {
+            showNotification('There was an error submitting your review. Please try again later.', 'error');
+        }
+        
+        submitButton.disabled = false;
+        submitButton.textContent = originalText;
     });
 }
 
@@ -133,18 +318,25 @@ function showNotification(message, type = 'info') {
     notification.className = `notification notification-${type}`;
     notification.innerHTML = `
         <div class="notification-content">
-            <i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'}"></i>
+            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
             <span>${message}</span>
         </div>
         <button class="notification-close">&times;</button>
     `;
     
     // Add styles
+    let backgroundColor = '#3b82f6'; // default blue
+    if (type === 'success') {
+        backgroundColor = '#10b981'; // green
+    } else if (type === 'error') {
+        backgroundColor = '#ef4444'; // red
+    }
+    
     notification.style.cssText = `
         position: fixed;
         top: 20px;
         right: 20px;
-        background: ${type === 'success' ? '#10b981' : '#3b82f6'};
+        background: ${backgroundColor};
         color: white;
         padding: 15px 20px;
         border-radius: 10px;
@@ -360,9 +552,126 @@ document.querySelectorAll('.btn, .service-card, .pricing-card').forEach(element 
     });
 });
 
+// Hero Image Carousel
+function initHeroCarousel() {
+    const carousel = document.querySelector('.hero-carousel');
+    if (!carousel) return;
+
+    const images = carousel.querySelectorAll('.carousel-image');
+    const dots = carousel.querySelectorAll('.carousel-dot');
+    const prevBtn = carousel.querySelector('.carousel-prev');
+    const nextBtn = carousel.querySelector('.carousel-next');
+    
+    let currentIndex = 0;
+    const totalImages = images.length;
+
+    // Only show carousel if there are images
+    if (totalImages === 0) return;
+
+    // Function to show specific slide
+    function showSlide(index) {
+        // Handle wrapping
+        if (index >= totalImages) {
+            currentIndex = 0;
+        } else if (index < 0) {
+            currentIndex = totalImages - 1;
+        } else {
+            currentIndex = index;
+        }
+
+        // Update images
+        images.forEach((img, i) => {
+            img.classList.remove('active');
+            if (i === currentIndex) {
+                img.classList.add('active');
+            }
+        });
+
+        // Update dots
+        dots.forEach((dot, i) => {
+            dot.classList.remove('active');
+            if (i === currentIndex) {
+                dot.classList.add('active');
+            }
+        });
+    }
+
+    // Next slide function
+    function nextSlide() {
+        showSlide(currentIndex + 1);
+    }
+
+    // Previous slide function
+    function prevSlide() {
+        showSlide(currentIndex - 1);
+    }
+
+    // Event listeners
+    if (nextBtn) {
+        nextBtn.addEventListener('click', nextSlide);
+    }
+
+    if (prevBtn) {
+        prevBtn.addEventListener('click', prevSlide);
+    }
+
+    // Dot navigation
+    dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+            showSlide(index);
+        });
+    });
+
+    // Auto-rotate every 5 seconds
+    let autoRotate = setInterval(nextSlide, 5000);
+
+    // Pause on hover
+    carousel.addEventListener('mouseenter', () => {
+        clearInterval(autoRotate);
+    });
+
+    carousel.addEventListener('mouseleave', () => {
+        autoRotate = setInterval(nextSlide, 5000);
+    });
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') {
+            prevSlide();
+        } else if (e.key === 'ArrowRight') {
+            nextSlide();
+        }
+    });
+
+    // Handle missing images - show placeholder if all images fail to load
+    let loadedImages = 0;
+    images.forEach((img, index) => {
+        img.addEventListener('error', function() {
+            loadedImages++;
+            // If all images fail, show a placeholder
+            if (loadedImages === totalImages) {
+                carousel.innerHTML = `
+                    <div class="image-placeholder" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-home" style="font-size: 4rem; color: white;"></i>
+                    </div>
+                `;
+            } else {
+                // Hide individual failed images
+                this.style.display = 'none';
+            }
+        });
+        img.addEventListener('load', function() {
+            // Image loaded successfully
+        });
+    });
+}
+
 // Initialize everything when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Novare Cleaning Services website loaded successfully!');
+    
+    // Initialize hero carousel
+    initHeroCarousel();
     
     // Add any initialization code here
     const currentYear = new Date().getFullYear();
